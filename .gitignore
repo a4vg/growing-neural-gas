@@ -1,0 +1,10 @@
+# Executables
+*
+!*.*
+!*/
+
+# System files
+.DS_Store
+
+# Program output
+output/
