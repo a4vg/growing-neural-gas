@@ -14,7 +14,7 @@ class Sobel
 
   public:
     static void grayscale(cv::Mat img, cv::Mat &imgGray);
-    static void sobel(cv::Mat &img, cv::Mat &imgSobel);
+    static void sobel(cv::Mat &img, cv::Mat &imgSobel, bool binary);
 };
 
 #endif
