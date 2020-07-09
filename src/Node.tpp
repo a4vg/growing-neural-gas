@@ -1,5 +1,5 @@
-template <typename G, typename N, typename E>
-Node<G, N, E>::~Node()
+template <typename G, typename NID, typename N, typename E>
+Node<G, NID, N, E>::~Node()
 {
   while(!edges.empty())
   {
@@ -8,8 +8,8 @@ Node<G, N, E>::~Node()
   }
 }
 
-template <typename G, typename N, typename E>
-void Node<G, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
+template <typename G, typename NID, typename N, typename E>
+void Node<G, NID, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
 {
   // Find edge and erase from edges
   auto& edgeIt = this->edges.begin();
@@ -25,8 +25,8 @@ void Node<G, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
   }
 }
 
-template <typename G, typename N, typename E>
-bool Node<G, N, E>::addEdge(Node *n2, E weight, bool addOtherEnd)
+template <typename G, typename NID, typename N, typename E>
+bool Node<G, NID, N, E>::addEdge(Node *n2, E &weight, bool addOtherEnd)
 {
   // Create edge
   edge* newEdge = new edge(this,n2,weight);

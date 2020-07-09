@@ -1,5 +1,5 @@
-template <typename N, typename E>
-Graph<N, E>::~Graph()
+template <typename NID, typename N, typename E>
+Graph<NID, N, E>::~Graph()
 {
   auto it = nodes.begin();
   while (!nodes.empty())
@@ -9,38 +9,36 @@ Graph<N, E>::~Graph()
   }
 }
 
-template <typename N, typename E>
-void Graph<N, E>::print()
+template <typename NID, typename N, typename E>
+void Graph<NID, N, E>::print()
 {
   for (auto& node : nodes)
   {
   std::cout<< "\nNode " << node.first << ": ";
   for (auto& edge : node.second->getEdges())
-    std::cout << edge->nodes[1]->getData() << " ";
+    std::cout << edge->nodes[1]->getId() << " ";
 }
 };
 
-template <typename N, typename E>
-bool Graph<N, E>::addNode(N nodeName, double x, double y)
+template <typename NID, typename N, typename E>
+const NID Graph<NID, N, E>::addNode(NID id, N data, double x, double y)
 {
-  if (nodes.find(nodeName)!=nodes.end()) return false; // name taken
-
-  node* newnode = new node(nodeName, x, y);
-  nodes[nodeName] = newnode;
+  node* newnode = new node(id, data, x, y);
+  nodes[id] = newnode;
   ++sizeOfGraph[0];
 
-  return true;
+  return id;
 };
 
-template <typename N, typename E>
-bool Graph<N, E>::addEdge(N n1Data, N n2Data, E weight)
+template <typename NID, typename N, typename E>
+bool Graph<NID, N, E>::addEdge(const int idN1, const int idN2, E weight)
 {
-  if (!nodes.count(n1Data) || !nodes.count(n2Data))
+  if (!nodes.count(idN1) || !nodes.count(idN2))
     return false; // not found
 
   // Get nodes
-  node* n1=nodes[n1Data];
-  node* n2=nodes[n2Data];
+  node* n1=nodes[idN1];
+  node* n2=nodes[idN2];
 
   bool inserted = n1->addEdge(n2, weight); // will also add edge to n2
 
@@ -54,27 +52,33 @@ bool Graph<N, E>::addEdge(N n1Data, N n2Data, E weight)
   return true;
 };
 
-template <typename N, typename E>
-bool Graph<N, E>::removeNode(N nData){
-  if (nodes.find(nData)==nodes.end())
+template <typename NID, typename N, typename E>
+bool Graph<NID, N, E>::removeNode(const NID id)
+{
+  if (!nodes.count(id))
     return false; // not found
 
-  node* n = nodes[nData];
+  node* n = nodes[id];
 
   // Remove node edges
   for (auto edge: n->edges)
-    n->removeEdgeWith(edge->nodes[1]->data);
+    n->removeEdgeWith(edge->nodes[1]);
   delete n;
 
   // Remove from adjacency map
-  nodes.erase(nData);
+  nodes.erase(id);
   return true;
 }
 
-template <typename N, typename E>
-bool Graph<N, E>::removeEdge(N n1Data, N n2Data){
-  if (nodes.find(n1Data)==nodes.end())
+template <typename NID, typename N, typename E>
+bool Graph<NID, N, E>::removeEdge(const NID idN1, const NID idN2)
+{
+  if (!nodes.count(idN1) || !nodes.count(idN2))
     return false; // not found
+  
+  // Get nodes
+  node* n1=nodes[idN1];
+  node* n2=nodes[idN2];
 
-  return nodes[n1Data]->removeEdgeWith(n2Data);
+  return n1->removeEdgeWith(n2);
 }

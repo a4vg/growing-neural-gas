@@ -11,13 +11,13 @@
 
 int const INFINITE=INT16_MAX;
 
-template <typename N, typename E>
+template <typename NID, typename N, typename E>
 class Graph {
   public:
-    typedef Graph<N, E> self;
-    typedef Node<self, N, E> node;
+    typedef Graph<NID, N, E> self;
+    typedef Node<self, NID, N, E> node;
     typedef Edge<self, N, E> edge;
-    typedef std::map<N, node*> NodeSeq;
+    typedef std::map<NID, node*> NodeSeq;
     typedef std::list<node*> NodeList;
     typedef std::vector<edge*> EdgeSeq;
     typedef typename NodeSeq::iterator NodeIte;
@@ -35,10 +35,10 @@ class Graph {
     int* size(){ return sizeOfGraph; };
 
     // Insertions and deletions
-    bool addNode(N nodeName, double x=0, double y=0);
-    bool addEdge(N n1Data, N n2Data, E weight);
-    bool removeNode(N nData);
-    bool removeEdge(N n1Data, N n2Data);
+    const NID addNode(NID id, N data, double x, double y);
+    bool addEdge(const int idN1, const int idN2, E weight);
+    bool removeNode(const NID id);
+    bool removeEdge(const NID idN1, const NID idN2);
 };
 
 #include "Graph.tpp"
