@@ -44,6 +44,10 @@ class Graph
     // Access methods
     node* getNode(const NID id);
     edge* getEdge(const NID idN1, const NID idN2);
+
+    // Iterator
+    NodeIte begin() { return nodes.begin();}
+    NodeIte end() { return nodes.end();}
 };
 
 #include "Graph.tpp"
