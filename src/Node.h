@@ -14,20 +14,22 @@ class Node {
     EdgeSeq edges;
 
   public:
-    double x;
-    double y;
+    float x;
+    float y;
     int degree=0;
     N data;
     
-    Node(NID _id, N _data=N{}, double _x=0, double _y=0) : id(_id), data(_data), x(_x), y(_y){};
+    Node(NID _id, N _data=N{}, float _x=0, float _y=0) : id(_id), data(_data), x(_x), y(_y){};
     ~Node();
 
     NodeIte removeEdgeWith(Node *n2, bool removeOtherEnd = true);
     bool addEdge(Node *n2, E &weight, bool addOtherEnd = true);
 
     EdgeSeq getEdges(){ return edges; };
-    const NID getId(){ return id; }
-    bool alone(){ return !degree; } // no edges connected
+    const NID getId(){ return id; };
+    void move(float _x, float _y){ x=_x; y=_y; };
+
+    bool alone(){ return !degree; }; // no edges connected
 };
 
 #include "Node.tpp"
