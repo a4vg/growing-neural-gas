@@ -1,7 +1,7 @@
-// g++ --std=c++11 Sobel.cpp main.cpp -o main `pkg-config --cflags --libs opencv` && ./main image_path
+// g++ --std=c++11 Image.cpp main.cpp -o main `pkg-config --cflags --libs opencv` && ./main image_path
 
 #include <iostream>
-#include "Sobel.h"
+#include "Image.h"
 
 int main( int argc, char** argv )
 {
@@ -15,9 +15,9 @@ int main( int argc, char** argv )
   const std::string filename = filepath.substr(filepath.find_last_of("/\\") + 1);
   const std::string outdir = "../output";
 
-  cv::Mat img = cv::imread(filepath);
+  Image img(filepath);
   cv::Mat imgSobel;
-  Sobel::sobel(img, imgSobel, true);
+  img.sobel(imgSobel, true);
   cv::imwrite(outdir + "/sobel-" + filename, imgSobel);
 
   return 0;
