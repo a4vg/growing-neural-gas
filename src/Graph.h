@@ -39,6 +39,8 @@ class Graph {
     bool addEdge(const int idN1, const int idN2, E weight);
     bool removeNode(const NID id);
     bool removeEdge(const NID idN1, const NID idN2);
+    NodeIte removeNode(node* n);
+    EdgeIte removeEdge(node* n1, node* n2);
 };
 
 #include "Graph.tpp"

@@ -9,13 +9,16 @@ Node<G, NID, N, E>::~Node()
 }
 
 template <typename G, typename NID, typename N, typename E>
-void Node<G, NID, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
+typename Node<G, NID, N, E>::NodeIte Node<G, NID, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
 {
   // Find edge and erase from edges
-  auto& edgeIt = this->edges.begin();
+  auto edgeIt = this->edges.begin();
   for (; edgeIt != this->edges.end(); ++edgeIt)
     if ((*edgeIt)->nodes[1] == n2)
-      this->edges.erase(edgeIt);
+    {
+      edgeIt = this->edges.erase(edgeIt);
+      break;
+    }
 
   // Remove from other node edges
   if (removeOtherEnd)
@@ -23,6 +26,8 @@ void Node<G, NID, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
     n2->removeEdgeWith(this, false);
     delete *edgeIt;
   }
+
+  return edgeIt;
 }
 
 template <typename G, typename NID, typename N, typename E>

@@ -6,6 +6,8 @@ class Node {
   public:
     typedef typename G::edge edge;
     typedef typename G::EdgeSeq EdgeSeq;
+    typedef typename G::EdgeIte EdgeIte;
+    typedef typename G::NodeIte NodeIte;
 
   private:
     const NID id;
@@ -20,7 +22,7 @@ class Node {
     Node(NID _id, N _data=N{}, double _x=0, double _y=0) : id(_id), data(_data), x(_x), y(_y){};
     ~Node();
 
-    void removeEdgeWith(Node *n2, bool removeOtherEnd = true);
+    NodeIte removeEdgeWith(Node *n2, bool removeOtherEnd = true);
     bool addEdge(Node *n2, E &weight, bool addOtherEnd = true);
 
     EdgeSeq getEdges(){ return edges; };

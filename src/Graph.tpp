@@ -53,21 +53,39 @@ bool Graph<NID, N, E>::addEdge(const int idN1, const int idN2, E weight)
 };
 
 template <typename NID, typename N, typename E>
+typename Graph<NID, N, E>::NodeIte Graph<NID, N, E>::removeNode(node* n)
+{
+  // Remove node edges
+  for (auto edge: n->edges)
+    n->removeEdgeWith(edge->nodes[1]);
+  delete n;
+
+  // Decrease node count
+  --sizeOfGraph[0];
+
+  // Remove from adjacency map
+  return nodes.erase(n->getId());
+}
+
+template <typename NID, typename N, typename E>
 bool Graph<NID, N, E>::removeNode(const NID id)
 {
   if (!nodes.count(id))
     return false; // not found
 
   node* n = nodes[id];
+  removeNode(n);
 
-  // Remove node edges
-  for (auto edge: n->edges)
-    n->removeEdgeWith(edge->nodes[1]);
-  delete n;
-
-  // Remove from adjacency map
-  nodes.erase(id);
   return true;
+}
+
+template <typename NID, typename N, typename E>
+typename Graph<NID, N, E>::EdgeIte Graph<NID, N, E>::removeEdge(node* n1, node* n2)
+{
+  // Decrease edge count
+  --sizeOfGraph[1];
+
+  return n1->removeEdgeWith(n2);
 }
 
 template <typename NID, typename N, typename E>
@@ -79,6 +97,7 @@ bool Graph<NID, N, E>::removeEdge(const NID idN1, const NID idN2)
   // Get nodes
   node* n1=nodes[idN1];
   node* n2=nodes[idN2];
+  removeEdge(n1, n2);
 
-  return n1->removeEdgeWith(n2);
+  return true;
 }
