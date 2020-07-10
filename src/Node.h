@@ -11,13 +11,13 @@ class Node {
 
   private:
     const NID id;
-    N data;
     EdgeSeq edges;
 
   public:
     double x;
     double y;
     int degree=0;
+    N data;
     
     Node(NID _id, N _data=N{}, double _x=0, double _y=0) : id(_id), data(_data), x(_x), y(_y){};
     ~Node();
@@ -26,7 +26,6 @@ class Node {
     bool addEdge(Node *n2, E &weight, bool addOtherEnd = true);
 
     EdgeSeq getEdges(){ return edges; };
-    N getData(){ return data; }
     const NID getId(){ return id; }
     bool alone(){ return !degree; } // no edges connected
 };

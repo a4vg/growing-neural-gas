@@ -8,11 +8,8 @@ class Edge {
   public:
     typedef typename G::node node;
     node* nodes[2];
-
-  private:
     E weight;
 
-  public:
     Edge(node* n1,node* n2, E _weight):weight(_weight)
     {
       nodes[0]=n1;
@@ -24,8 +21,6 @@ class Edge {
     bool operator==(Edge<G, N, E> cmp) { return nodes[0] == cmp.nodes[0] && nodes[1] == cmp.nodes[1]; }
     bool operator>(Edge<G, N, E> cmp) const { return cmp.weight==weight? nodes[1]>cmp.nodes[1] : weight>cmp.weight;}
     bool operator<(Edge<G, N, E> cmp) const { return cmp.weight==weight? nodes[1]<cmp.nodes[1] : weight<cmp.weight; }
-
-    int getWeight(){ return weight; }
 };
 
 #endif
