@@ -8,8 +8,6 @@
 #include "Node.h"
 #include "Edge.h"
 
-int const INFINITE=INT16_MAX;
-
 template <typename NID, typename N, typename E>
 class Graph
 {
