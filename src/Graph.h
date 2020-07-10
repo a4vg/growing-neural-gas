@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <list>
 #include <map>
 
 #include "Node.h"
@@ -12,13 +11,13 @@
 int const INFINITE=INT16_MAX;
 
 template <typename NID, typename N, typename E>
-class Graph {
+class Graph
+{
   public:
     typedef Graph<NID, N, E> self;
     typedef Node<self, NID, N, E> node;
     typedef Edge<self, N, E> edge;
     typedef std::map<NID, node*> NodeSeq;
-    typedef std::list<node*> NodeList;
     typedef std::vector<edge*> EdgeSeq;
     typedef typename NodeSeq::iterator NodeIte;
     typedef typename EdgeSeq::iterator EdgeIte;
