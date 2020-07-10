@@ -18,9 +18,9 @@ int main( int argc, char** argv )
   const std::string outdir = "../output";
 
   // Apply sobel mask to image
-  Image img(filepath);
+  cv::Mat img = cv::imread(filepath);
   cv::Mat imgSobel;
-  img.sobel(imgSobel, true);
+  Image::sobel(img, imgSobel);
   cv::imwrite(outdir + "/sobel-" + filename, imgSobel);
   std::cout << "Sobel applied to image: " << outdir << "/sobel-" << filename << "\n";
 
@@ -38,9 +38,9 @@ int main( int argc, char** argv )
   g.addEdge(1, 3, 0);
   g.addEdge(2, 4, 0);
 
-  Image blackImg(cv::Mat::zeros(cv::Size(50,50), CV_8UC3));
+  cv::Mat blackImg = cv::Mat::zeros(cv::Size(50,50), CV_8UC3);
   cv::Mat imgGraph;
-  blackImg.overlapGraph(imgGraph, g);
+  Image::overlapGraph(blackImg, imgGraph, g);
   cv::imwrite(outdir + "/graph.png", imgGraph);
   std::cout << "Graph drawn (square with diagonals): " << outdir + "/graph.png\n";
 

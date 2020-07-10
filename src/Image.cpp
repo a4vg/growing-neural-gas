@@ -19,43 +19,53 @@ int Image::sumProduct(const int G[3][3], cv::Mat A)
     result += G[i][j]*A.at<uchar>(i, j);
   return result;
 }
-int Image::normalize(int px)
-{
-  return px>255? 255 : px;
-}
 
-void Image::grayscale(cv::Mat &imgGray)
+void Image::grayscale(cv::Mat &img, cv::Mat &imgGray)
 {
-  imgGray = cv::Mat::zeros(this->img.size(), CV_8UC1);
-  for (int i=0; i<this->img.rows; ++i)
-    for (int j=0; j<this->img.cols; ++j)
+  imgGray = cv::Mat::zeros(img.size(), CV_8UC1);
+  for (int i=0; i<img.rows; ++i)
+    for (int j=0; j<img.cols; ++j)
     {
-      cv::Vec3b & color = this->img.at<cv::Vec3b>(i,j);
+      cv::Vec3b & color = img.at<cv::Vec3b>(i,j);
       imgGray.at<uchar>(i, j) = (color[0]+color[1]+color[2])/3;
     }
 }
 
-void Image::sobel(cv::Mat &imgSobel, bool binary)
+void Image::sobel(cv::Mat &img, cv::Mat &imgSobel)
 {
-  imgSobel = cv::Mat::zeros(this->img.size(), CV_8UC1);
+  imgSobel = cv::Mat::zeros(img.size(), CV_8UC1);
 
   // Get grayscale image
   cv::Mat imgGray;
-  this->grayscale(imgGray);
+  Image::grayscale(img, imgGray);
 
   // Iterate through matrix
-  for (int i=0; i<this->img.rows-2; ++i)
-    for (int j=0; j<this->img.cols-2; ++j)
+  for (int i=0; i<img.rows-2; ++i)
+    for (int j=0; j<img.cols-2; ++j)
     {
       int gx = sumProduct(sobelGx, imgGray(cv::Rect(j, i, 3, 3)));
       int gy = sumProduct(sobelGy, imgGray(cv::Rect(j, i, 3, 3)));
       
       // Euclidean distance
-      int newPx = this->normalize(std::sqrt(gx*gx + gy*gy));
-      if (binary)
-        newPx = std::round(newPx/255)*255;
-      imgSobel.at<uchar>(i, j) = newPx;
+      imgSobel.at<uchar>(i, j) = Image::normalize(std::sqrt(gx*gx + gy*gy));
     }
+}
+
+void Image::updateToNextPixelOn(cv::Mat &img1channel, int &x, int &y)
+{
+  for (int i=x; i<img1channel.rows; ++i)
+    for (int j=y; j<img1channel.cols; ++j)
+      if(
+        i!=x && j!=y // skip first pixel x, y
+        && Image::isPixelOn(img1channel.at<uchar>(i, j))
+      )
+      {
+        x=i;
+        y=j;
+        break;
+      }
+  x=-1;
+  y=-1;
 }
 
 #endif

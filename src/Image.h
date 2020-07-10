@@ -6,32 +6,29 @@
 
 class Image
 {
-  cv::Mat img;
-
   // Sobel kernels
   static const int sobelGx[3][3];
   static const int sobelGy[3][3];
 
   static int sumProduct(const int G[3][3], cv::Mat A);
-  static int normalize(int px);
+  static int normalize(int px) { return px>255? 255 : px; };
 
   public:
-    Image(cv::Mat _img): img(_img) {};
-    Image(std::string imgpath): img(cv::imread(imgpath)) {};
-
-    void grayscale(cv::Mat &imgGray);
-    void sobel(cv::Mat &imgSobel, bool binary);
+    static void grayscale(cv::Mat &img, cv::Mat &imgGray);
+    static void sobel(cv::Mat &img, cv::Mat &imgSobel);
 
     template <typename G>
-    void overlapGraph(cv::Mat &imgGraph, G& g);
+    static void overlapGraph(cv::Mat &img, cv::Mat &imgGraph, G& g);
+    static bool isPixelOn(uchar px) { return (bool) std::round(px/255); };
+    static void updateToNextPixelOn(cv::Mat &img1channel, int &x, int &y);
 };
 
 template <typename G>
-void Image::overlapGraph(cv::Mat &imgGraph, G& g)
+void Image::overlapGraph(cv::Mat &img, cv::Mat &imgGraph, G& g)
 {
   const int thickness = 2;
   const cv::Scalar colorRGB = cv::Scalar(0, 0, 255); // red
-  imgGraph = this->img.clone();
+  imgGraph = img.clone();
 
   for (auto& node: g)
     for (auto& edge: node.second->getEdges())
