@@ -101,3 +101,23 @@ bool Graph<NID, N, E>::removeEdge(const NID idN1, const NID idN2)
 
   return true;
 }
+
+template <typename NID, typename N, typename E>
+typename Graph<NID, N, E>::node* Graph<NID, N, E>::getNode(const NID id)
+{
+  if (!nodes.count())
+    return nullptr; // not found
+
+  return nodes[id];
+}
+
+template <typename NID, typename N, typename E>
+typename Graph<NID, N, E>::edge* Graph<NID, N, E>::getEdge(const NID idN1, const NID idN2)
+{
+  if (!nodes.count(idN1) || !nodes.count(idN2))
+    return nullptr; // not found
+
+  for (auto& edge: nodes[idN1]->getEdges())
+    if (edge->nodes[1]->getId() == idN2)
+      return edge;
+}

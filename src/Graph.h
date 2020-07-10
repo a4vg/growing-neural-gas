@@ -41,6 +41,10 @@ class Graph {
     bool removeEdge(const NID idN1, const NID idN2);
     NodeIte removeNode(node* n);
     EdgeIte removeEdge(node* n1, node* n2);
+
+    // Access methods
+    node* getNode(const NID id);
+    edge* getEdge(const NID idN1, const NID idN2);
 };
 
 #include "Graph.tpp"
