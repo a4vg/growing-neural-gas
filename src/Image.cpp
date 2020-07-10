@@ -26,26 +26,26 @@ int Image::normalize(int px)
 
 void Image::grayscale(cv::Mat &imgGray)
 {
-  imgGray = cv::Mat::zeros(img.size(), CV_8UC1);
-  for (int i=0; i<img.rows; ++i)
-    for (int j=0; j<img.cols; ++j)
+  imgGray = cv::Mat::zeros(this->img.size(), CV_8UC1);
+  for (int i=0; i<this->img.rows; ++i)
+    for (int j=0; j<this->img.cols; ++j)
     {
-      cv::Vec3b & color = img.at<cv::Vec3b>(i,j);
+      cv::Vec3b & color = this->img.at<cv::Vec3b>(i,j);
       imgGray.at<uchar>(i, j) = (color[0]+color[1]+color[2])/3;
     }
 }
 
-void Image::sobel( cv::Mat &imgSobel, bool binary)
+void Image::sobel(cv::Mat &imgSobel, bool binary)
 {
-  imgSobel = cv::Mat::zeros(img.size(), CV_8UC1);
+  imgSobel = cv::Mat::zeros(this->img.size(), CV_8UC1);
 
   // Get grayscale image
   cv::Mat imgGray;
   this->grayscale(imgGray);
 
   // Iterate through matrix
-  for (int i=0; i<img.rows-2; ++i)
-    for (int j=0; j<img.cols-2; ++j)
+  for (int i=0; i<this->img.rows-2; ++i)
+    for (int j=0; j<this->img.cols-2; ++j)
     {
       int gx = sumProduct(sobelGx, imgGray(cv::Rect(j, i, 3, 3)));
       int gy = sumProduct(sobelGy, imgGray(cv::Rect(j, i, 3, 3)));
