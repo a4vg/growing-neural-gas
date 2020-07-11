@@ -2,6 +2,8 @@
 #define GRAPH_H
 
 #include <iostream>
+#include <algorithm> // partial_sort
+#include <cmath> // sqrt, pow
 #include <vector>
 #include <map>
 
@@ -23,6 +25,7 @@ class Graph
   private:
     NodeSeq nodes; // adjacency map <data (node data), node pointer>
     int sizeOfGraph[2]= {0,0}; // {n nodes, n edges}
+    static float distance(float x1, float y1, float x2, float y2);
 
   public:
     Graph(){};
@@ -46,6 +49,9 @@ class Graph
     // Iterator
     NodeIte begin() { return nodes.begin();}
     NodeIte end() { return nodes.end();}
+
+    // Algorithms
+    std::vector<NID> knn(int n, float x, float y);
 };
 
 #include "Graph.tpp"

@@ -121,3 +121,35 @@ typename Graph<NID, N, E>::edge* Graph<NID, N, E>::getEdge(const NID idN1, const
     if (edge->nodes[1]->getId() == idN2)
       return edge;
 }
+
+template <typename NID, typename N, typename E>
+float Graph<NID, N, E>::distance(float x1, float y1, float x2, float y2)
+{
+  return std::sqrt(std::pow(x1-x2, 2) + std::pow(y1-y2, 2));
+}
+
+template <typename NID, typename N, typename E>
+std::vector<NID> Graph<NID, N, E>::knn(int n, float x, float y)
+{
+  // Separate nodes id
+  std::vector<NID> neighborsId;
+  for (auto& node : nodes)
+    neighborsId.push_back(node.first);
+
+  // Make sure n is not larger than the number of nodes
+  n = n>neighborsId.size()? neighborsId.size(): n;
+
+  // Sort nodes id by distance, but only rearranges the first n elements
+  std::partial_sort(neighborsId.begin(), neighborsId.begin() + n, neighborsId.end(),
+    [this, x, y](NID idN1, NID idN2)
+    {
+      float dist1 = Graph<NID, N, E>::distance(x, y, this->nodes[idN1]->x, this->nodes[idN1]->y);
+      float dist2 = Graph<NID, N, E>::distance(x, y, this->nodes[idN2]->x, this->nodes[idN2]->y);
+      return dist1 < dist2;
+    });
+
+  // Return the first n elements
+  neighborsId.resize(n);
+  return neighborsId;
+
+}
