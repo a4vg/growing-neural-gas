@@ -4,8 +4,7 @@ int main(int argc, char const *argv[])
 {
   GNGTraits traits;
 
-  GNG gng(traits);
-  gng.test();
+  GNG gng(traits, "../sample-imgs/lena.jpg", "../output");
 
-  return 0;
+  return 0; 
 }

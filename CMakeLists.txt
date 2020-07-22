@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.8)
+set(CMAKE_CXX_COMPILER /usr/bin/g++)
+set (CMAKE_CXX_STANDARD 11)
+project( gng )
+find_package( OpenCV REQUIRED )
+add_executable( gng src/Image.cpp src/gng_ex.cpp )
+target_link_libraries( gng ${OpenCV_LIBS} )
