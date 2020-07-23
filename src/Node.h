@@ -16,20 +16,20 @@ class Node {
   public:
     float x;
     float y;
-    int degree=0;
     N data;
     
     Node(NID _id, N _data=N{}, float _x=0, float _y=0) : id(_id), data(_data), x(_x), y(_y){};
     ~Node();
 
-    NodeIte removeEdgeWith(Node *n2, bool removeOtherEnd = true);
+    EdgeIte removeEdgeWith(Node *n2, bool removeOtherEnd = true);
     bool addEdge(Node *n2, E &weight, bool addOtherEnd = true);
 
     EdgeSeq getEdges(){ return edges; };
     const NID getId(){ return id; };
     void move(float _x, float _y){ x=_x; y=_y; };
 
-    bool alone(){ return !degree; }; // no edges connected
+    bool alone(){ return edges.empty(); }; // no edges connected
+    float distance(float x, float y){ return G::distance(this->x, this->y, x, y); };
 };
 
 #include "Node.tpp"

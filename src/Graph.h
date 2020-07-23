@@ -25,7 +25,6 @@ class Graph
   private:
     NodeSeq nodes; // adjacency map <data (node data), node pointer>
     int sizeOfGraph[2]= {0,0}; // {n nodes, n edges}
-    static float distance(float x1, float y1, float x2, float y2);
 
   public:
     Graph(){};
@@ -45,12 +44,14 @@ class Graph
     // Access methods
     node* getNode(const NID id);
     edge* getEdge(const NID idN1, const NID idN2);
+    NID getNextId() { return nodes.rbegin()->first +1; }
 
     // Iterator
     NodeIte begin() { return nodes.begin();}
     NodeIte end() { return nodes.end();}
 
     // Algorithms
+    static float distance(float x1, float y1, float x2, float y2);
     std::vector<NID> knn(int n, float x, float y);
 };
 

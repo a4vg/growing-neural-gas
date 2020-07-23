@@ -9,7 +9,7 @@ Node<G, NID, N, E>::~Node()
 }
 
 template <typename G, typename NID, typename N, typename E>
-typename Node<G, NID, N, E>::NodeIte Node<G, NID, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
+typename Node<G, NID, N, E>::EdgeIte Node<G, NID, N, E>::removeEdgeWith(Node *n2, bool removeOtherEnd)
 {
   // Find edge and erase from edges
   auto edgeIt = this->edges.begin();
@@ -47,9 +47,6 @@ bool Node<G, NID, N, E>::addEdge(Node *n2, E &weight, bool addOtherEnd)
   
   // Insert edge
   this->edges.insert(itEdge, newEdge);
-
-  // Increase degree
-  ++this->degree;
 
   if (addOtherEnd)
     n2->addEdge(this, weight, false);

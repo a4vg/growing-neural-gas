@@ -21,6 +21,16 @@ class Edge {
     bool operator==(Edge<G, N, E> cmp) { return nodes[0] == cmp.nodes[0] && nodes[1] == cmp.nodes[1]; }
     bool operator>(Edge<G, N, E> cmp) const { return cmp.weight==weight? nodes[1]>cmp.nodes[1] : weight>cmp.weight;}
     bool operator<(Edge<G, N, E> cmp) const { return cmp.weight==weight? nodes[1]<cmp.nodes[1] : weight<cmp.weight; }
+
+    void setWeight(E newWeight)
+    {
+      this->weight = newWeight;
+      auto edgesNodeEnd = this->nodes[1]->getEdges();
+
+      for (auto& e: edgesNodeEnd)
+        if (e->nodes[1] == this->nodes[0])
+          e->weight = newWeight;
+    };
 };
 
 #endif
