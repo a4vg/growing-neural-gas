@@ -24,12 +24,16 @@ class Edge {
 
     void setWeight(E newWeight)
     {
+      // std::cout << "Setting weight\n";
       this->weight = newWeight;
       auto edgesNodeEnd = this->nodes[1]->getEdges();
 
-      for (auto& e: edgesNodeEnd)
+      for (auto& e: edgesNodeEnd){
+        // std::cout << "Iterating to find another edge\n";
         if (e->nodes[1] == this->nodes[0])
           e->weight = newWeight;
+      }
+      // std::cout << "Finished weight\n";
     };
 };
 

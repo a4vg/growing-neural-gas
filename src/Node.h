@@ -21,8 +21,8 @@ class Node {
     Node(NID _id, N _data=N{}, float _x=0, float _y=0) : id(_id), data(_data), x(_x), y(_y){};
     ~Node();
 
-    EdgeIte removeEdgeWith(Node *n2, bool removeOtherEnd = true);
-    bool addEdge(Node *n2, E &weight, bool addOtherEnd = true);
+    EdgeIte removeEdgeWith(Node *n1, Node *n2, bool removeOtherEnd = true);
+    bool addEdge(Node *n1, Node *n2, E &weight, bool addOtherEnd = true);
 
     EdgeSeq getEdges(){ return edges; };
     const NID getId(){ return id; };

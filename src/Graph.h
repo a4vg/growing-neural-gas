@@ -23,7 +23,7 @@ class Graph
     typedef typename EdgeSeq::iterator EdgeIte;
 
   private:
-    NodeSeq nodes; // adjacency map <data (node data), node pointer>
+    NodeSeq nodes; // adjacency map <id, node pointer>
     int sizeOfGraph[2]= {0,0}; // {n nodes, n edges}
 
   public:

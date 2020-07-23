@@ -40,7 +40,7 @@ bool Graph<NID, N, E>::addEdge(const int idN1, const int idN2, E weight)
   node* n1=nodes[idN1];
   node* n2=nodes[idN2];
 
-  bool inserted = n1->addEdge(n2, weight); // will also add edge to n2
+  bool inserted = n1->addEdge(n1, n2, weight); // will also add edge to n2
 
   // Edge exists
   if (!inserted)
@@ -59,7 +59,7 @@ typename Graph<NID, N, E>::NodeIte Graph<NID, N, E>::removeNode(node* n)
 
   // Remove node edges
   for (auto edge: n->getEdges())
-    n->removeEdgeWith(edge->nodes[1]);
+    n->removeEdgeWith(n, edge->nodes[1]);
   delete n;
 
   // Decrease node count
@@ -87,7 +87,7 @@ typename Graph<NID, N, E>::EdgeIte Graph<NID, N, E>::removeEdge(node* n1, node* 
   // Decrease edge count
   --sizeOfGraph[1];
 
-  return n1->removeEdgeWith(n2);
+  return n1->removeEdgeWith(n1, n2);
 }
 
 template <typename NID, typename N, typename E>
