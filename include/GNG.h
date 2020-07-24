@@ -50,7 +50,7 @@ class GNG
 
 public:
   GNG(GNGTraits _traits, std::string imgpath, std::string outdir);
-  void train(int maxIterations=100, int lineThick=2, bool exportMP4=true, int fps=5);
+  void train(int maxIterations=1000, int lineThick=3, bool exportMP4=true, int fps=50);
 };
 
 #endif

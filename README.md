@@ -1,29 +1,56 @@
-# cs3102-GNG
+# Growing Neural Gas
 
-> Se pide implementar una Growing Neural Gas con los siguientes requerimientos:
-- Lenguaje C++ 
-- Librerias: Opencv para abrir imagenes y mostrarlas (guardar resultado, o mostrar video) 
-- Docker (input imagen de entrada, output-> video o image resultante) 
+## Custom options
+... or use the default options.
 
-## Pipeline
+Set max iterations `maxIterations`, line thickness `lineThick` or select if the output should be a video or image `exportMP4` on [line 43 of main.cpp](main.cpp#L43). If video, select the `fps`.
+
+Default:
+```c++
+int maxIterations = 1000
+int lineThick = 3
+bool exportMP4 = true
+int fps = 50
 
 ```
-Input: Imagen(4k)
 
-Step 0: Leer imagen 
-Step 1: Preprocersar la imagen (escala de grises, redimensionar, etc) 
-Step 2: Mascara de sobel. (GX ,GY ,  G = Distancia_euclideana de (GX, GY)  -> Canny si alguien desea. 
-Step 3: Clase Grafo (por lista de adyacencia) 
-Step 4: Clases GNG
-Step 5: Entrenar GNG con Imagen. (establecer hyper parametros adecuados: coeficientes e iteraciones) 
-Step 6: Graficar GNG en la Imagen. 
 
-Output: Imagen inicial, imagen con la gng graficada, gng exportada a archivo, sobel, video (si es que lo hay), un archivo de configuracion de hyperparametros, 
+Set custom traits for the GNG on [line 28 of main.cpp](main.cpp#L28).
+
+Default trait:
+```c++
+// Move winners by fractions of ..
+float eb = 0.05;
+float en = 0.03;
+
+int maxAge = 10;
+int lambda = 10; // Add point each .. iterations
+
+// Decrease local error in each iteration by factors..
+float alpha = 0.01;
+float beta = 0.02;
 ```
 
-## Consideraciones finales
-- Si no compila se califica sobre 11
-- Usen templates, traits, etc.
-- Sean ordenados. 
+## Run
+### Without Docker
+Requirement: OpenCV with ffmpeg
+```
+mkdir build
+cd build
+cmake ..
+make
 
-# Fecha de entrega. (14 de Julio) 
+mkdir output
+./gng ../sample-imgs/apple.jpg ../output
+```
+
+### With Docker
+Make sure output and sample-imgs are set as volumes to be able to watch the output and test new images.
+```
+docker build --tag alpine-gng .
+mkdir output
+docker run -itd --name gng -v $PWD/output:/gng/output -v $PWD/sample-imgs:/gng/sample-imgs alpine-gng
+docker exec -it gng build/gng sample-imgs/apple.jpg output
+```
+
+

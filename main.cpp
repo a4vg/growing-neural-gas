@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 
   if( argc != 3)
   {
-    std::cout <<"Image path and output directory required\n";
+    std::cout <<"GNG: Image path and output directory arguments are required\n";
     return -1;
   }
 
@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
 
   std::cout << "\nBeggining training\n";
   GNG gng(traits, outdir + "/sobel-" + filename, outdir);
-  gng.train(10000, 3, true, 80); // maxIterations, lineThick, exportMP4, int fps
+  gng.train(); // maxIterations, lineThick, exportMP4, int fps
   std::cout << "\nTraining ended";
 
   return 0; 
