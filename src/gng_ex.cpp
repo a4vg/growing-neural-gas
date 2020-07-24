@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
   */
 
   GNG gng(traits, "../output/sobel-apple.jpg", "../output");
-  gng.train(10000, true, 50);
+  gng.train(10000, 5, true, 80); // maxIterations, lineThick, exportMP4, int fps
 
   return 0; 
 }

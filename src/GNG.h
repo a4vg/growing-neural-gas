@@ -24,7 +24,7 @@ struct GNGTraits
   float eb = 0.05;
   float en = 0.03;
 
-  int maxAge = 25;
+  int maxAge = 20;
   int lambda = 10; // Add point each .. iterations
 
   // Decrease local error in each iteration by factors..
@@ -158,10 +158,6 @@ void GNG::train(int maxIterations, int lineThick, bool exportMP4, int fps)
     graph::node* w1 = g.getNode(winners[0]);
     graph::node* w2 = g.getNode(winners[1]);
 
-    /* Increment age of edges emanating from w1 */
-    for (graph::edge* edge: w1->getEdges())
-      edge->setWeight(edge->weight+1);
-
     /* Update local error of w1 */
     w1->data = pow(w1->distance(this->currentX, this->currentY), 2);
 
@@ -171,6 +167,9 @@ void GNG::train(int maxIterations, int lineThick, bool exportMP4, int fps)
     {
       auto n = edge->nodes[1];
       n->move(n->x + ((this->currentX - n->x) * traits.en), n->y + ((this->currentY - n->y) * traits.en));
+
+      /* Increment age of edges emanating from w1 */
+      edge->setWeight(edge->weight+1);
     }
 
     /* Refresh age (weight) of edge between winners or create one */
