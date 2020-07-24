@@ -62,24 +62,4 @@ void Image::getAllPixelsOn(cv::Mat &imgSobel, std::vector<cv::Point>& pixels)
     }
 }
 
-void Image::updateToNextPixelOn(cv::Mat &img1channel, int &x, int &y)
-{
-  for (int i=x; i<img1channel.rows; ++i)
-    for (int j=y; j<img1channel.cols; ++j){
-        if(
-          i!=x && j!=y // skip first pixel x, y
-          && Image::isPixelOn(img1channel.at<cv::Vec3b>(i, j)[0])
-        )
-        {
-          x=i;
-          y=j;
-          // std::cout << "Pixel: " <<(int) img1channel.at<cv::Vec3b>(i, j)[0] <<"\n";
-          return;
-        }
-    }
-      
-  x=-1;
-  y=-1;
-}
-
 #endif

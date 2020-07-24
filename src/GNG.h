@@ -57,7 +57,7 @@ class GNG
 
 public:
   GNG(GNGTraits _traits, std::string imgpath, std::string outdir);
-  void train(int maxIterations=100, bool exportMP4=true, int fps=5);
+  void train(int maxIterations=100, int lineThick=2, bool exportMP4=true, int fps=5);
 };
 
 
@@ -77,8 +77,6 @@ GNG::GNG(GNGTraits _traits, std::string imgpath, std::string outdir)
 
 void GNG::initVideo(int fps, char fourcc[4])
 {
-  std::cout << "Initializing video\n";
-
   this->video.open(
     this->outvideoPath, 
     cv::VideoWriter::fourcc(fourcc[0], fourcc[1], fourcc[2], fourcc[3]), // codec
@@ -95,19 +93,13 @@ bool GNG::getNextInput(int &x, int &y)
   if (this->inputs.empty())
     return false;
 
-  // std::cout << "Retrieving input\n";
   std::uniform_int_distribution<std::mt19937::result_type> randElement(0, this->inputs.size()-1);
   int idx = randElement(gen);
   x = this->inputs[idx].x;
   y = this->inputs[idx].y;
 
-  // x = this->inputs.back().x;
-  // y = this->inputs.back().y;
-
   this->inputs.erase(this->inputs.begin()+idx);
-  // this->inputs.pop_back();
 
-  // std::cout << "Input erased \n";
   return true;
 }
 
@@ -131,14 +123,11 @@ void GNG::init()
   g.addNode(1, 0, x1, y1); // id, error, coordinates
   g.addNode(2, 0, x2, y2);
 
-  // std::cout << "Random point1 in " << x1 << ", " << y1 << "\n";
-  // std::cout << "Random point2 in " << x2 << ", " << y2 << "\n";
-
   /* Add all inputs */
   Image::getAllPixelsOn(this->img, this->inputs);
 }
 
-void GNG::train(int maxIterations, bool exportMP4, int fps)
+void GNG::train(int maxIterations, int lineThick, bool exportMP4, int fps)
 {
   if (exportMP4)
   {
@@ -149,105 +138,69 @@ void GNG::train(int maxIterations, bool exportMP4, int fps)
   
   std::cout << "Beggining training\n";
   this->init();
-  // Image::updateToNextPixelOn(this->img, this->currentX, this->currentY);
-  /* Add new input from input data */
-  // std::cout << "Current pixel: (" << this->currentX << ", " << this->currentY << ")\n";
 
-  // for (int iteration=0; iteration<maxIterations && this->currentX!=-1 && this->currentY!=-1; ++iteration)
-  for (int iteration=0; iteration<maxIterations && this->getNextInput(this->currentX, this->currentY); ++iteration)
+  for (int iteration=0; iteration<maxIterations
+       && this->getNextInput(this->currentX, this->currentY); /* Add new input from input data */
+       ++iteration)
   {
-    std::cout << "\nIteration #" <<  iteration << "\n";
-
-    // cv::Mat imgWithGraph;
-    // Image::overlapGraph<graph>(this->img, imgWithGraph, g, currentX, currentY);
-    // cv::imwrite(this->outimgPath + "train" + std::to_string(iteration) + ".png", imgWithGraph);
+    std::cout << "\nIteration #" <<  iteration;
 
     if (exportMP4)
     {
       cv::Mat imgWithGraph;
-      Image::overlapGraph<graph>(this->img, imgWithGraph, g, currentX, currentY);
+      Image::overlapGraph<graph>(this->img, imgWithGraph, g, currentX, currentY, lineThick);
       this->video << imgWithGraph;
     }
   
-
     /* Find first two winner nodes w1 and w2 */
     std::vector<int> winners = g.knn(2, this->currentX, this->currentY);
-    // std::cout << "There are: " << winners.size() << " winners" << "\n";
 
     graph::node* w1 = g.getNode(winners[0]);
     graph::node* w2 = g.getNode(winners[1]);
-
-
-    // std::cout << "Winner 1: " << w1->getId() << "\n";
-    // std::cout << "Winner 2: " << w2->getId() << "\n";
 
     /* Increment age of edges emanating from w1 */
     for (graph::edge* edge: w1->getEdges())
       edge->setWeight(edge->weight+1);
 
-    // std::cout << "Edges age incremented\n";
-
     /* Update local error of w1 */
     w1->data = pow(w1->distance(this->currentX, this->currentY), 2);
-    // std::cout << "Updated local error of w1. Error is " << w1->data << "\n";
 
     /* Move w1 and all nodes connected to it */
     w1->move(w1->x + ((this->currentX - w1->x) * traits.eb), w1->y + ((this->currentY - w1->y) * traits.eb));
-    // std::cout << "w1 has been moved\n";
     for (auto& edge: w1->getEdges())
     {
       auto n = edge->nodes[1];
       n->move(n->x + ((this->currentX - n->x) * traits.en), n->y + ((this->currentY - n->y) * traits.en));
     }
-    // std::cout << "All nodes connected to w1 have been moved\n";
 
     /* Refresh age (weight) of edge between winners or create one */
     graph::edge* winnersEdge = g.getEdge(w1->getId(), w2->getId());
-    if (winnersEdge){
+    if (winnersEdge)
       winnersEdge->setWeight(0);
-      // std::cout << "Edge refreshed\n";
-    }
-    else{
+    else
       g.addEdge(w1->getId(), w2->getId(), 0);
-      // std::cout << "Edge added\n";
-    }
 
     /* Remove edges exceding the maximum age */
     for (auto itNode = g.begin(); itNode != g.end();)
     {
-      // std::cout << "In remove zone, iterating\n";
       std::vector<graph::node*> edgesToRemove;
-      // itNode->first: node id, node ptr
       auto edges = itNode->second->getEdges();
       for (auto itEdge = edges.begin(); itEdge != edges.end(); ++itEdge)
-        if ((*itEdge)->weight > traits.maxAge){
-          // std::cout << "Pushing back an edge to remove\n";
-          // std::cout << "The edge connects: " << itNode->first << " and " << (*itEdge)->nodes[1]->getId() << "\n";
+        if ((*itEdge)->weight > traits.maxAge)
           edgesToRemove.push_back((*itEdge)->nodes[1]);
-        }
       
-      // std::cout << "Time to remove\n";
-      for (auto& nodeEnd: edgesToRemove){
-        // std::cout << "Removing edge with max age connecting " << itNode->first << " and " << nodeEnd->getId() << "\n";
+      for (auto& nodeEnd: edgesToRemove)
         g.removeEdge(itNode->second, nodeEnd);
-      }
 
 
     /* Remove nodes without emanating edges */
-      if (itNode->second->alone()){
-        // std::cout << "Node " << itNode->first << " is alone, erasing\n";
+      if (itNode->second->alone())
         itNode = g.removeNode(itNode->second);
-      }
-      else{
-        // std::cout << "No nodes to remove\n";
+      else
         ++itNode;
-      }
-         
     }
 
-    // std::cout << "Edges with maximum age removed and alone nodes too\n";
-
-    // /* If number of inputs presented is a multiple of lambda, insert new node */
+    /* If number of inputs presented is a multiple of lambda, insert new node */
     if (iteration%traits.lambda == 0)
     {
       /* Determine node q with largest error */
@@ -259,7 +212,6 @@ void GNG::train(int maxIterations, bool exportMP4, int fps)
           q = itNode->second;
           largestErrorQ = q->data;
         }
-      // std::cout << "Node q with largest error determined. Is " <<  q->getId() << " and has a data of " <<  q->data << "\n";
 
       /* Among nodes connected to q, find node f with largest error */
       float largestErrorF = -1;
@@ -272,16 +224,12 @@ void GNG::train(int maxIterations, bool exportMP4, int fps)
           largestErrorF = f->data;
         }
       }
-      // std::cout << "Node f connected to q determined. Is " <<  f->getId() <<  "\n";
 
       /* Insert a node r between q and f */
       int rX = (q->x + f->x)/2;
       int rY = (q->y + f->y)/2;
-      // std::cout << "Q coordinates: " << q->x << ", " << q->y << "\n";
-      // std::cout << "F coordinates: " << f->x << ", " << f->y << "\n";
       
       const int rId = g.addNode(g.getNextId(), 0, rX, rY);
-      // std::cout << "R id: " << rId << "." << " coordinates : " << rX << ", " << rY << "\n";
 
       /* Remove edge between q and f and create edges with r with age=0 */
       g.removeEdge(q, f);
@@ -299,23 +247,16 @@ void GNG::train(int maxIterations, bool exportMP4, int fps)
     /* Decrease local error of all nodes by a factor beta */
     for (auto itNode = g.begin(); itNode != g.end(); ++itNode)
       itNode->second->data = itNode->second->data * traits.beta;
-
-    // std::cout << "Graph has: " << g.size()[0] << " nodes" << "\n";
-    // std::cout << "Graph has: " << g.size()[1] << " edges" << "\n";
-
-    
-    /* Add new input from input data */
-    // Image::updateToNextPixelOn(this->img, this->currentX, this->currentY);
-    // std::cout << "Current pixel: (" << this->currentX << ", " << this->currentY << ")\n";
   }
+
   std::cout << "\nTraining ended";
-  if (exportMP4){
+
+  if (exportMP4)
     this->video.release();
-  }
   else
   {
     cv::Mat imgWithGraph;
-    Image::overlapGraph<graph>(this->img, imgWithGraph, g, currentX, currentY);
+    Image::overlapGraph<graph>(this->img, imgWithGraph, g, currentX, currentY, lineThick);
     cv::imwrite(this->outimgPath, imgWithGraph);
     std::cout << "Final image in: " << this->outimgPath << "\n";
   }

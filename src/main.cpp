@@ -1,5 +1,3 @@
-// g++ --std=c++11 Image.cpp main.cpp -o main `pkg-config --cflags --libs opencv` && ./main image_path
-
 #include <iostream>
 #include "Image.h"
 #include "Graph.h"

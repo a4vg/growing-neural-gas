@@ -34,9 +34,6 @@ bool Node<G, NID, N, E>::addEdge(Node *n1, Node *n2, E &weight, bool addOtherEnd
   // Create edge
   edge* newEdge = new edge(n1,n2,weight);
 
-  // Insert edge
-  // std::cout << "Adding edge connecting " << this->getId() << " and " << n2->getId() << "\n";
-
   // Edge already in vector
   for (auto& e: this->edges)
   {
@@ -44,6 +41,7 @@ bool Node<G, NID, N, E>::addEdge(Node *n1, Node *n2, E &weight, bool addOtherEnd
       return false;
   }
 
+  // Insert edge
   this->edges.push_back(newEdge);
 
   if (addOtherEnd)

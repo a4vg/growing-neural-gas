@@ -19,16 +19,14 @@ class Image
     static void sobel(cv::Mat &img, cv::Mat &imgSobel);
 
     template <typename G>
-    static void overlapGraph(cv::Mat &img, cv::Mat &imgGraph, G& g, int x, int y);
+    static void overlapGraph(cv::Mat &img, cv::Mat &imgGraph, G& g, int x, int y, int thickness=2);
     static bool isPixelOn(int px, int t=127) { return px>t; }; // 127 = 255/2
-    static void updateToNextPixelOn(cv::Mat &img1channel, int &x, int &y);
     static void getAllPixelsOn(cv::Mat &imgSobel, std::vector<cv::Point>& pixels);
 };
 
 template <typename G>
-void Image::overlapGraph(cv::Mat &img, cv::Mat &imgGraph, G& g, int x, int y)
+void Image::overlapGraph(cv::Mat &img, cv::Mat &imgGraph, G& g, int x, int y, int thickness)
 {
-  const int thickness = 2;
   const cv::Scalar colorRGB = cv::Scalar(0, 0, 255); // red
   imgGraph = img.clone();
 
@@ -42,7 +40,7 @@ void Image::overlapGraph(cv::Mat &img, cv::Mat &imgGraph, G& g, int x, int y)
 
   // Input point
   cv::Point p = cv::Point(y, x);
-  cv::circle(imgGraph, p, 5, cv::Scalar(0, 0, 255), -1);
+  cv::circle(imgGraph, p, 5, cv::Scalar(255, 0, 0), -1);
 }
 
 #endif
