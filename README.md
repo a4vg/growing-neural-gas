@@ -1,5 +1,8 @@
 # Growing Neural Gas
 
+## Example video
+This [video](examples/apple.mp4) is the compressed output of the GNG trained with the [apple sample image](sample-imgs/apple.jpg) in 2231 iterations with the default traits and at 100 fps.
+
 ## Custom options
 ... or use the default options.
 
