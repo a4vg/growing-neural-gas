@@ -3,7 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
-#include "Graph.h"
+#include "Graph/Graph.h"
 
 class Image
 {

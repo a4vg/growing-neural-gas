@@ -1,65 +1,10 @@
-#ifndef GNG_H
-#define GNG_H
+#ifndef GNG_CPP
+#define GNG_CPP
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/video/video.hpp>
-
-#include <limits>
-#include <random>
-
-#include <string>
-#include <vector>
-
-#include "Graph.h"
-#include "Image.h"
-
-int const INFINITE=std::numeric_limits<float>::max();
+#include "GNG.h"
 
 std::random_device dev;
 std::mt19937 gen(dev());
-
-struct GNGTraits
-{
-  // Move winners by fractions of ..
-  float eb = 0.05;
-  float en = 0.03;
-
-  int maxAge = 20;
-  int lambda = 10; // Add point each .. iterations
-
-  // Decrease local error in each iteration by factors..
-  float alpha = 0.01;
-  float beta = 0.02;
-};
-
-class GNG
-{
-  typedef Graph<int, float, int> graph;
-
-  GNGTraits traits;
-
-  graph g; // <id type, node data type (error), edge data type (age)>
-  cv::Mat img;
-  std::vector<cv::Point> inputs;
-
-  // Train
-  int currentX = 0;
-  int currentY = 0;
-
-  // Video and image output
-  std::string outvideoPath;
-  std::string outimgPath;
-  cv::VideoWriter video;
-
-  void initVideo(int fps, char fourcc[4]);
-  void init();
-  bool getNextInput(int &x, int &y);
-
-public:
-  GNG(GNGTraits _traits, std::string imgpath, std::string outdir);
-  void train(int maxIterations=100, int lineThick=2, bool exportMP4=true, int fps=5);
-};
-
 
 GNG::GNG(GNGTraits _traits, std::string imgpath, std::string outdir)
 : traits(_traits)
@@ -85,7 +30,7 @@ void GNG::initVideo(int fps, char fourcc[4])
   );
 
   if (!video.isOpened())
-    throw std::runtime_error("Could not open the output video");
+    throw std::runtime_error("Could not open the output video. This usually happens when the img path is invalid.");
 }
 
 bool GNG::getNextInput(int &x, int &y)
@@ -136,14 +81,13 @@ void GNG::train(int maxIterations, int lineThick, bool exportMP4, int fps)
     this->initVideo(fps, fourcc);
   }
   
-  std::cout << "Beggining training\n";
   this->init();
 
   for (int iteration=0; iteration<maxIterations
        && this->getNextInput(this->currentX, this->currentY); /* Add new input from input data */
        ++iteration)
   {
-    std::cout << "\nIteration #" <<  iteration;
+    std::cout << "\rIteration #" <<  iteration;
 
     if (exportMP4)
     {
@@ -248,16 +192,19 @@ void GNG::train(int maxIterations, int lineThick, bool exportMP4, int fps)
       itNode->second->data = itNode->second->data * traits.beta;
   }
 
-  std::cout << "\nTraining ended";
+  
 
   if (exportMP4)
+  {
     this->video.release();
+    std::cout << "\nFinal video in: " << this->outvideoPath;
+  }
   else
   {
     cv::Mat imgWithGraph;
     Image::overlapGraph<graph>(this->img, imgWithGraph, g, currentX, currentY, lineThick);
     cv::imwrite(this->outimgPath, imgWithGraph);
-    std::cout << "Final image in: " << this->outimgPath << "\n";
+    std::cout << "\nFinal image in: " << this->outimgPath;
   }
 }
 
